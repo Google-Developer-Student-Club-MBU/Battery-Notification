@@ -1,7 +1,34 @@
-# Battery-Notification
+#By using the following three lines intall the packages before running the code
+#import pip
+#pip.main(['install', 'psutil'])
+#pip.main(['install', 'plyer'])
+import psutil
+from plyer import notification
+import time
 
-Battery notification is a feature that allows users to be notified when their battery level is low. This can be useful for preventing users from running out of battery and being unable to use their devices.
+def get_battery_status():
+    battery = psutil.sensors_battery()
+    percent = battery.percent
+    power_plugged = battery.power_plugged
+    return percent, power_plugged
 
-Battery notification can be implemented in a variety of ways, but one common approach is to use a system tray icon. The system tray is a small area in the taskbar where users can see icons for frequently used applications and system tools.
+def notify_low_battery():
+    title = "Low Battery Warning"
+    message = "Your battery level is low. Please plug in your charger."
+    notification.notify(
+        title=title,
+        message=message,
+        timeout=10,  # Display the notification for 10 seconds
+    )
 
-When the battery level is low, the system tray icon can change color or display a message to notify the user. The user can then click on the icon to open a dialog box that provides more information about the battery level and options for charging the device.
+def main():
+    while True:
+        battery_percent, power_plugged = get_battery_status()
+
+        if not power_plugged and battery_percent <= 20:
+            notify_low_battery()
+
+        time.sleep(300)  # Check battery status every 5 minutes (adjust as needed)
+
+if __name__ == "__main__":
+    main()
